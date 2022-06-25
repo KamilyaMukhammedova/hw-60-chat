@@ -4,7 +4,7 @@ const Message = (props) => {
   return (
     <div className="card mt-4">
       <div className="card-header text-primary">
-        {props.author}
+        {props.author} | message number {props.index + 1}
       </div>
       <div className="card-body">
         <h5 className="card-title">" {props.message} "</h5>

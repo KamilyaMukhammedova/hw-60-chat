@@ -1,23 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Messages from "../../components/Messages/Messages";
+import NewMsgForm from "../../components/NewMsgForm/NewMsgForm";
 
 const Chat = () => {
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
+  const [newMessage, setNewMessage] = useState({
+    userDisplayName: '',
+    userMsg: '',
+  });
 
   const apiUrl = 'http://146.185.154.90:8000/messages';
 
   useEffect(() => {
     let date;
+    let interval = 0;
 
     const fetchPrevMessages = async () => {
       try {
         const response = await axios(apiUrl);
         const messages = response.data;
 
-
         if (messages.length !== 0) {
+          date = messages[messages.length - 1].datetime;
           setMessages(messages);
         }
 
@@ -30,16 +36,52 @@ const Chat = () => {
     fetchPrevMessages().catch(e => console.error(e));
   }, []);
 
+  const onChangeNewMsgData = (name, value) => {
+    setNewMessage((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const sendNewMessage = async (e) => {
+    e.preventDefault();
+
+    const data = new URLSearchParams();
+    data.set('message', newMessage.userMsg);
+    data.set('author', newMessage.userDisplayName);
+
+    if (newMessage.userMsg === '' || newMessage.userDisplayName === '') {
+      alert('Fill all the fields to send the message on chat');
+    }
+
+    try {
+      await axios.post(apiUrl, data)
+        .then(() => {
+          setNewMessage({userDisplayName: '', userMsg: ''});
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
 
   return (
     <div className="container">
-      <div className="row">
+      <div className="row pt-5">
         <div className="col-7">
           <h1>Messages</h1>
           <Messages messages={messages}/>
         </div>
         <div className="col-5">
-
+          <h1>Send your message</h1>
+          <NewMsgForm
+            newMessage={newMessage}
+            onChange={onChangeNewMsgData}
+            onSending={sendNewMessage}
+          />
         </div>
       </div>
     </div>
