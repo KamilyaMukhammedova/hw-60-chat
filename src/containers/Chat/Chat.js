@@ -15,7 +15,7 @@ const Chat = () => {
 
   useEffect(() => {
     let date;
-    let interval = 0;
+    let interval = null;
 
     const fetchPrevMessages = async () => {
       try {
@@ -26,6 +26,28 @@ const Chat = () => {
           date = messages[messages.length - 1].datetime;
           setMessages(messages);
         }
+
+        console.log('start');
+        if (interval) return;
+
+        interval = setInterval(async () => {
+          // console.log('in interval');
+          // console.log(date);
+
+          const responseInInterval = await axios(apiUrl + `?datetime=${date}`);
+          const messagesInInterval = responseInInterval.data;
+
+          if (messagesInInterval.length !== 0) {
+            date = messagesInInterval[messagesInInterval.length - 1].datetime;
+            // console.log(date);
+            // console.log(messagesInInterval);
+
+            const messagesCopy = [...messages];
+            const allMessages = messagesCopy.concat(messagesInInterval);
+            setMessages(allMessages);
+          }
+
+        }, 2000);
 
 
       } catch (e) {
