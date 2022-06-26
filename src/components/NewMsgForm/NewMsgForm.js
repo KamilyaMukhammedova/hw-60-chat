@@ -3,8 +3,8 @@ import React from 'react';
 const NewMsgForm = (props) => {
   return (
     <form className="mt-4" onSubmit={props.onSending}>
-      <div className="form-group row">
-        <label htmlFor="userDisplayName" className="col-sm-2 col-form-label">Display name</label>
+      <div className="form-group row align-items-center">
+        <label htmlFor="userDisplayName" className="col-sm-2 col-form-label greenColor">Display name</label>
         <div className="col-sm-10">
           <input
             type="text"
@@ -17,8 +17,8 @@ const NewMsgForm = (props) => {
           />
         </div>
       </div>
-      <div className="form-group row">
-        <label htmlFor="userMsg" className="col-sm-2 col-form-label">Message</label>
+      <div className="form-group row align-items-center">
+        <label htmlFor="userMsg" className="col-sm-2 col-form-label greenColor">Message</label>
         <div className="col-sm-10">
           <textarea
             className="form-control"
@@ -32,12 +32,18 @@ const NewMsgForm = (props) => {
         </div>
       </div>
       <div className="text-right">
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
-          Send
-        </button>
+        {props.isLoadingSendMsg ?
+          <div className="spinner-border text-secondary" role="status">
+            <span className="sr-only">Loading...</span>
+          </div> :
+          <button
+            type="submit"
+            className="btn btn-secondary"
+            disabled={props.error !== null}
+          >
+            Send
+          </button>
+        }
       </div>
     </form>
   );
